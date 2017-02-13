@@ -2,24 +2,24 @@
 function updateSheets() {
   var ss = SpreadsheetApp.getActive();
   var inputSheet = findSheet(ss, 'DropTable');
-  
+
   range_step = '10';
   range_max = '1250';
-  
+
   var range = inputSheet.getRange(1, 1, 6, 17);
- 
+
   var allInputData = range.getValues();
-  
+
   hpa = parseInt(allInputData[0][14]);
-  hgt_sgt = allInputData[1][16];  
-  hum = allInputData[0][16];  
+  hgt_sgt = allInputData[1][16];
+  hum = allInputData[0][16];
   temps = allInputData[4].slice(1, 10);
   mvs = allInputData[5].slice(1, 10);
 
   for (var i = 0; i < temps.length; i++) {
     temp = parseInt(temps[i]);
     var sheet = findSheet(ss, 'Temp'+temp);
-  
+
     var all_data = queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mvs[i], temp);
     var write_range = sheet.getRange(1,1, all_data.length, all_data[0].length);
     write_range.setValues(all_data);
@@ -40,7 +40,7 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
 
   data = getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt);
   rows = parseData(data);
-  
+
   ret = [];
   ret.push(
       [ 'range'
@@ -68,17 +68,17 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
       printz = false;
     }
   }
-  
+
   return ret;
 }
 
 function parseData(data) {
   row = /<TR CLASS="(data|zero)_row">(.+?)<\/TR>/gi;
-  
+
   cell = /<TD CLASS=\"([^"]+)\">([^<]+)<\/TD>/gi;
-  
+
   output = [];
-  
+
   while (rows = row.exec(data)) {
     e = {};
     while (cells = cell.exec(rows[2])) {
@@ -166,8 +166,8 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
   };
   var url = 'http://www.jbmballistics.com/cgi-bin/jbmtraj-5.1.cgi';
   //url = 'https://httpbin.org/post';
-  resp = UrlFetchApp.fetch(url, options);  
-  
+  resp = UrlFetchApp.fetch(url, options);
+
   resp = resp.getContentText();
   resp = resp.replace(/\n/g, "");
   return resp;
