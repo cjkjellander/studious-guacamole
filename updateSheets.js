@@ -1,4 +1,4 @@
-
+// -*- mode: js; js-indent-level: 2; -*-
 function updateSheets() {
   var ss = SpreadsheetApp.getActive();
   var inputSheet = findSheet(ss, 'DropTable');
