@@ -102,7 +102,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
 , "cal.u":"9"
 , "m_vel.v":mv
 , "m_vel.u":"17"
-, "ch_dst.v":"3"
+, "ch_dst.v":"0"
 , "ch_dst.u":"12"
 , "hgt_sgt.v":hgt_sgt
 , "hgt_sgt.u":"11"
