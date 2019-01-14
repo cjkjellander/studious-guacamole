@@ -118,7 +118,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
 , "ele.u":"2"
 , "los.v":"0.0"
 , "cnt.v":"0.0"
-, "spd_wnd.v":"5"
+, "spd_wnd.v":"10"
 , "spd_wnd.u":"17"
 , "ang_wnd.v":"90.0"
 , "spd_tgt.v":"5"
