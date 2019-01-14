@@ -20,7 +20,8 @@ function updateSheets() {
     temp = parseInt(temps[i]);
     var sheet = findSheet(ss, 'Temp'+temp);
 
-    var all_data = queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mvs[i], temp);
+    var all_data = queryJBM(hgt_sgt, range_step, range_max,
+                            hpa, hum, mvs[i], temp);
     var write_range = sheet.getRange(1,1, all_data.length, all_data[0].length);
     write_range.setValues(all_data);
   }
