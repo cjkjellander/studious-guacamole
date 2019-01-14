@@ -149,7 +149,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
 , "def_cnt.v": "on"
 //, "mrk_trs.v": "on"
 , "inc_ds.v": "on"
- };
+};
 
   var options = {
     'method': 'post',
