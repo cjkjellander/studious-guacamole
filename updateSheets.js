@@ -65,9 +65,9 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
         , rows[i]['mach_cell']
         ]);
     }
-    if (rows[i]['mach_cell'] < 1 && temp != 0) {
-      printz = false;
-    }
+    //if (rows[i]['mach_cell'] < 1 && temp != 0) {
+    //  printz = false;
+    //}
   }
 
   return ret;
