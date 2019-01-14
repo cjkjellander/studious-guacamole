@@ -94,7 +94,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
  var formData =
 { "b_id.v":"-1"
 , "bc.v":"0.274"
- // G1 = 0, G7 = 4
+// G1 = 0, G7 = 4
 , "d_f.v":"4"
 , "bt_wgt.v":"130"
 , "bt_wgt.u":"23"
