@@ -159,6 +159,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Origin': 'http://www.jbmballistics.com',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Connection': 'keep-alive',
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.8,sv;q=0.6',
       'Upgrade-Insecure-Requests': '1',
