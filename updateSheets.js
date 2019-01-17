@@ -172,7 +172,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt,
     , "col2_un.v":"1.00"
     , "col2_un.u":"2"
     //, "cor_ele.v":"on"
-    , "cor_azm.v":"off"
+    //, "cor_azm.v":"off"
     , "rng_un.v":"on"
     , "def_cnt.v":"on"
     //, "mrk_trs.v": "on"
