@@ -15,6 +15,17 @@ function updateSheets() {
   hum = allInputData[0][16];
   temps = allInputData[4].slice(1, 10);
   mvs = allInputData[5].slice(1, 10);
+  zero_range = allInputData[1][13];
+  zero_temp = parseInt(allInputData[2][12]);
+  zero_mvs = allInputData[2][13];
+  zero_hpa = parseInt(allInputData[2][14]);
+  zero_hum = allInputData[2][15];
+
+  var zero_sheet = findSheet(ss, 'Zero');
+  var all_data = queryJBM(hgt_sgt, '10', '1250', zero_hpa,
+                          zero_hum, zero_mvs, zero_temp);
+  var write_range = zero_sheet.getRange(1,1, all_data.length, all_data[0].length);
+  write_range.setValues(all_data);
 
   for (var i = 0; i < temps.length; i++) {
     temp = parseInt(temps[i]);
@@ -38,7 +49,6 @@ function findSheet(sheets, name) {
 }
 
 function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
-
   data = getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt);
   rows = parseData(data);
 
@@ -50,11 +60,12 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
       , 'lead'
       , 'danger'
       , 'mach'
+      , 'elevation'
       ]);
   var printz = true;
   for (var i = 0; i < rows.length; i++) {
     if (!printz) {
-      ret.push(['', '', '', '', '', '']);
+      ret.push(['', '', '', '', '', '', '']);
     } else {
       ret.push(
         [ i*(range_step)
@@ -63,27 +74,35 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
         , rows[i]['lead_angle_cell']
         , rows[i]['range_cell']
         , rows[i]['mach_cell']
+        , rows[i]['elevation']
         ]);
     }
     //if (rows[i]['mach_cell'] < 1 && temp != 0) {
     //  printz = false;
     //}
   }
-
   return ret;
 }
 
 function parseData(data) {
-  row = /<TR CLASS="(data|zero)_row">(.+?)<\/TR>/gi;
-
+  row = /<TR CLASS="(output|data|zero)_row">(.+?)<\/TR>/gmi;
   cell = /<TD CLASS=\"([^"]+)\">([^<]+)<\/TD>/gi;
+  elev_cell = /Elevation:<TD CLASS="input_value_cell" COLSPAN="1">(.*?) mil<TD/;
 
   output = [];
 
   while (rows = row.exec(data)) {
     e = {};
-    while (cells = cell.exec(rows[2])) {
-      e[cells[1]] = cells[2];
+    if (rows[1] == 'output') {
+      if (elevation = elev_cell.exec(rows[2])) {
+        e['elevation'] = elevation[1];
+      } else {
+        e['elevation'] = "other: "; //rows[2];
+      }
+    } else {
+      while (cells = cell.exec(rows[2])) {
+        e[cells[1]] = cells[2];
+      }
     }
     output.push(e);
   }
