@@ -15,7 +15,7 @@ function updateSheets() {
   hum = allInputData[0][16];
   temps = allInputData[4].slice(1, 10);
   mvs = allInputData[5].slice(1, 10);
-  zero_range = allInputData[1][13];
+  zero_range = parseInt(allInputData[1][13]);
   zero_temp = parseInt(allInputData[2][12]);
   zero_mvs = allInputData[2][13];
   zero_hpa = parseInt(allInputData[2][14]);
@@ -23,8 +23,11 @@ function updateSheets() {
 
   var zero_sheet = findSheet(ss, 'Zero');
   var all_data = queryJBM(hgt_sgt, '10', '1250', zero_hpa,
-                          zero_hum, zero_mvs, zero_temp);
-  var write_range = zero_sheet.getRange(1,1, all_data.length, all_data[0].length);
+                          zero_hum, zero_mvs, zero_temp, String(zero_range),
+                          '1.0', 'on');
+  var elevation = all_data[1][6];
+  var write_range = zero_sheet.getRange(1,1, all_data.length,
+                                        all_data[0].length);
   write_range.setValues(all_data);
 
   for (var i = 0; i < temps.length; i++) {
@@ -32,8 +35,10 @@ function updateSheets() {
     var sheet = findSheet(ss, 'Temp'+temp);
 
     var all_data = queryJBM(hgt_sgt, range_step, range_max,
-                            hpa, hum, mvs[i], temp);
-    var write_range = sheet.getRange(1,1, all_data.length, all_data[0].length);
+                            hpa, hum, mvs[i], temp, String(300),
+                            String(elevation), 'off');
+    var write_range = sheet.getRange(1,1, all_data.length,
+                                     all_data[0].length);
     write_range.setValues(all_data);
   }
 }
@@ -48,8 +53,10 @@ function findSheet(sheets, name) {
   return null;
 }
 
-function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
-  data = getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt);
+function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp,
+                  zero, elev, cor_elev) {
+  data = getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt,
+                 zero, elev, cor_elev);
   rows = parseData(data);
 
   ret = [];
@@ -85,7 +92,7 @@ function queryJBM(hgt_sgt, range_step, range_max, hpa, hum, mv, temp) {
 }
 
 function parseData(data) {
-  row = /<TR CLASS="(output|data|zero)_row">(.+?)<\/TR>/gmi;
+  row = /<TR CLASS="(output|data|zero)_row">(.+?)<\/TR>/gi;
   cell = /<TD CLASS=\"([^"]+)\">([^<]+)<\/TD>/gi;
   elev_cell = /Elevation:<TD CLASS="input_value_cell" COLSPAN="1">(.*?) mil<TD/;
 
@@ -109,7 +116,8 @@ function parseData(data) {
   return output;
 }
 
-function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
+function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt,
+                 zero, elev, cor_elev) {
   var formData = {
     "b_id.v":"-1"
     , "bc.v":"0.274"
@@ -133,7 +141,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
     , "ofs_zer.u":"11"
     , "azm.v":"0.0"
     , "azm.u":"2"
-    , "ele.v":"0.0"
+    , "ele.v":elev
     , "ele.u":"2"
     , "los.v":"0.0"
     , "cnt.v":"0.0"
@@ -148,7 +156,7 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
     , "rng_min.v":"0"
     , "rng_max.v":range_max
     , "rng_inc.v":range_step
-    , "rng_zer.v":"100"
+    , "rng_zer.v":zero
     , "tmp.v":temp
     , "tmp.u":"18"
     , "prs.v":hpa
@@ -163,12 +171,17 @@ function getData(range_step, range_max, mv, temp, hpa, hum, hgt_sgt) {
     , "col1_un.u":"11"
     , "col2_un.v":"1.00"
     , "col2_un.u":"2"
-    , "cor_ele.v": "on"
-    , "rng_un.v":  "on"
-    , "def_cnt.v": "on"
+    //, "cor_ele.v":"on"
+    , "cor_azm.v":"off"
+    , "rng_un.v":"on"
+    , "def_cnt.v":"on"
     //, "mrk_trs.v": "on"
-    , "inc_ds.v": "on"
+    , "inc_ds.v":"on"
   };
+
+  if (cor_elev == 'on') {
+    formData["cor_ele.v"] = "on";
+  }
 
   var options = {
     'method': 'post',
